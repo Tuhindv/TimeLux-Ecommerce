@@ -1,8 +1,10 @@
-
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/useCart";
+import { formatTaka, getProductImage, handleImageFallback } from "../utils/watchHelpers";
 
-function Cart() {
+export default function Cart() {
+  const navigate = useNavigate();
   const {
     cartItems,
     increaseQuantity,
@@ -11,280 +13,199 @@ function Cart() {
     clearCart,
     cartTotal,
     cartCount,
+    prepareCartCheckout,
   } = useCart();
+
+  useEffect(() => {
+    document.title = "Shopping Bag — TimeLux Luxury Watches";
+  }, []);
 
   const deliveryCharge = cartItems.length > 0 ? 100 : 0;
   const grandTotal = cartTotal + deliveryCharge;
 
+  const handleProceedToCheckout = () => {
+    prepareCartCheckout();
+    navigate("/checkout");
+  };
+
   return (
-    <div className="min-h-screen bg-[#080808] px-5 py-10 text-white md:px-16">
-
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-12">
       {/* Header */}
-      <header className="mb-10 flex items-center justify-between border-b border-[#d4af37]/30 pb-6">
-        <Link
-          to="/"
-          className="text-2xl font-bold tracking-[4px] text-[#d4af37]"
-        >
-          TIMELUX
-        </Link>
+      <header className="mb-8 flex items-center justify-between border-b border-[#d4af37]/20 pb-5">
+        <div>
+          <p className="text-[10px] sm:text-xs font-semibold tracking-[4px] text-[#d4af37] uppercase">
+            Curated Selection
+          </p>
+          <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-[#f5f1e8]">
+            Shopping <span className="text-[#d4af37]">Bag</span>
+          </h1>
+        </div>
 
         <Link
-          to="/"
-          className="text-sm text-gray-400 transition hover:text-[#d4af37]"
+          to="/#collection"
+          className="text-xs font-semibold text-[#d4af37] transition hover:text-[#f5f1e8]"
         >
           ← Continue Shopping
         </Link>
       </header>
 
-      {/* Page Title */}
-      <div className="mb-10">
-        <p className="text-sm tracking-[4px] text-[#d4af37]">
-          YOUR SELECTION
-        </p>
-
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-4xl font-bold">
-            Shopping <span className="text-[#d4af37]">Cart</span>
-          </h1>
-
-          {cartItems.length > 0 && (
-            <span className="text-sm text-gray-400">
-              {cartCount} Items in Cart
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Empty Cart */}
+      {/* Empty Bag State */}
       {cartItems.length === 0 ? (
-        <div className="border border-white/10 bg-[#111] px-5 py-20 text-center">
-
-          <div className="mb-6 text-7xl">
-            🛒
+        <div className="rounded-2xl border border-[#d4af37]/20 bg-[#141416] px-6 py-20 text-center shadow-lg">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[#d4af37]/30 bg-[#d4af37]/10 text-2xl text-[#d4af37]">
+            👜
           </div>
-
-          <h2 className="text-2xl font-semibold">
-            Your Cart is Empty
-          </h2>
-
-          <p className="mt-3 text-gray-400">
-            You haven't added any watches to your cart yet.
+          <h2 className="mt-5 text-xl font-bold text-[#f5f1e8]">Your Bag is Empty</h2>
+          <p className="mt-2 text-xs text-gray-400 max-w-sm mx-auto leading-5">
+            You haven’t added any luxury timepieces yet. Explore our handcrafted collections.
           </p>
-
           <Link
-            to="/"
-            className="mt-8 inline-block bg-[#d4af37] px-8 py-4 font-bold text-black transition hover:bg-white"
+            to="/#collection"
+            className="mt-6 inline-flex rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b8964e] px-8 py-3 text-xs font-bold tracking-widest text-[#09090b] shadow-md transition hover:from-white hover:to-white"
           >
-            EXPLORE WATCHES →
+            EXPLORE TIMEPIECES →
           </Link>
-
         </div>
       ) : (
-
-        <div className="grid items-start gap-10 lg:grid-cols-3">
-
-          {/* Cart Products */}
-          <div className="space-y-5 lg:col-span-2">
-
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h2 className="text-xl font-semibold">
-                Cart Items
-              </h2>
-
+        <div className="grid items-start gap-8 lg:grid-cols-3">
+          {/* Cart Products List */}
+          <div className="space-y-4 lg:col-span-2">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 text-xs text-gray-400">
+              <span>{cartCount} {cartCount === 1 ? "Item" : "Items"} in Bag</span>
               <button
+                type="button"
                 onClick={() => {
-                  if (window.confirm("Are you sure you want to clear your cart?")) {
+                  if (window.confirm("Remove all items from your bag?")) {
                     clearCart();
                   }
                 }}
-                className="text-sm text-red-400 transition hover:text-red-300"
+                className="text-red-400 hover:text-red-300 transition"
               >
-                Clear Cart
+                Clear All
               </button>
             </div>
 
             {cartItems.map((item) => (
-
-              <div
+              <article
                 key={item.id}
-                className="grid gap-5 border border-white/10 bg-[#111] p-5 sm:grid-cols-[150px_1fr]"
+                className="flex flex-col sm:flex-row gap-4 rounded-xl border border-white/10 bg-[#141416] p-4 shadow-sm transition hover:border-[#d4af37]/40"
               >
+                {/* Product Thumbnail */}
+                <Link
+                  to={`/product/${item.id}`}
+                  className="aspect-square h-28 w-28 shrink-0 overflow-hidden rounded-lg bg-[#0e0e10] self-center sm:self-start"
+                >
+                  <img
+                    src={getProductImage(item)}
+                    alt={item.name}
+                    onError={handleImageFallback}
+                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                </Link>
 
-                {/* Product Image */}
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="h-40 w-full object-cover"
-                />
-
-                {/* Product Details */}
-                <div className="flex flex-col justify-between">
-
+                {/* Details */}
+                <div className="flex flex-1 flex-col justify-between">
                   <div className="flex items-start justify-between gap-3">
-
                     <div>
-                      <p className="text-xs tracking-[3px] text-[#d4af37]">
-                        TIMELUX COLLECTION
+                      <p className="text-[10px] tracking-wider uppercase text-[#d4af37]">
+                        {item.category || "TIMELUX"}
                       </p>
-
-                      <h3 className="mt-2 text-xl font-semibold">
-                        {item.name}
-                      </h3>
-
-                      <p className="mt-2 text-lg font-bold text-[#d4af37]">
-                        ৳{item.price.toLocaleString("en-BD")}
+                      <h2 className="mt-1 text-sm font-semibold text-[#f5f1e8] line-clamp-1">
+                        <Link to={`/product/${item.id}`} className="hover:text-[#d4af37] transition">
+                          {item.name}
+                        </Link>
+                      </h2>
+                      <p className="mt-1 text-sm font-bold text-[#d4af37]">
+                        {formatTaka(item.price)}
                       </p>
                     </div>
 
-                    {/* Remove Button */}
                     <button
+                      type="button"
                       onClick={() => removeFromCart(item.id)}
-                      className="text-sm text-red-400 transition hover:text-red-300"
+                      aria-label={`Remove ${item.name}`}
+                      className="text-xs text-gray-400 hover:text-red-400 transition"
                     >
-                      ✕ Remove
+                      ✕
                     </button>
-
                   </div>
 
-                  <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-
-                    {/* Quantity Control */}
-                    <div>
-                      <p className="mb-2 text-xs text-gray-400">
-                        Quantity
-                      </p>
-
-                      <div className="flex w-fit items-center border border-white/20">
-
-                        <button
-                          onClick={() => decreaseQuantity(item.id)}
-                          className="px-4 py-2 transition hover:bg-[#333]"
-                          aria-label="Decrease quantity"
-                        >
-                          −
-                        </button>
-
-                        <span className="min-w-10 text-center">
-                          {item.quantity}
-                        </span>
-
-                        <button
-                          onClick={() => increaseQuantity(item.id)}
-                          className="px-4 py-2 transition hover:bg-[#333]"
-                          aria-label="Increase quantity"
-                        >
-                          +
-                        </button>
-
-                      </div>
+                  {/* Quantity and Subtotal */}
+                  <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
+                    <div className="flex items-center rounded-lg border border-white/15 bg-[#09090b]">
+                      <button
+                        type="button"
+                        onClick={() => decreaseQuantity(item.id)}
+                        aria-label="Decrease quantity"
+                        className="px-2.5 py-1 text-xs text-gray-300 hover:bg-white/10"
+                      >
+                        −
+                      </button>
+                      <span className="min-w-8 text-center font-mono text-xs font-semibold text-[#f5f1e8]">
+                        {item.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => increaseQuantity(item.id)}
+                        aria-label="Increase quantity"
+                        className="px-2.5 py-1 text-xs text-gray-300 hover:bg-white/10"
+                      >
+                        +
+                      </button>
                     </div>
 
-                    {/* Item Subtotal */}
                     <div className="text-right">
-                      <p className="text-xs text-gray-400">
-                        Subtotal
-                      </p>
-
-                      <p className="mt-1 font-semibold text-[#d4af37]">
-                        ৳{(item.price * item.quantity).toLocaleString("en-BD")}
-                      </p>
+                      <span className="text-[10px] text-gray-400 block">Item Subtotal</span>
+                      <span className="font-semibold text-xs text-[#f5f1e8]">
+                        {formatTaka(item.price * item.quantity)}
+                      </span>
                     </div>
-
                   </div>
-
                 </div>
-              </div>
-
+              </article>
             ))}
-
-            {/* Continue Shopping */}
-            <Link
-              to="/"
-              className="inline-block pt-3 text-sm text-[#d4af37] transition hover:text-white"
-            >
-              ← Continue Shopping
-            </Link>
-
           </div>
 
-          {/* Order Summary */}
-          <div className="h-fit border border-[#d4af37]/30 bg-[#111] p-6">
-
-            <p className="text-xs tracking-[4px] text-[#d4af37]">
-              ORDER DETAILS
-            </p>
-
-            <h2 className="mb-7 mt-3 text-2xl font-bold">
+          {/* Order Summary Card */}
+          <aside className="rounded-2xl border border-[#d4af37]/30 bg-[#141416] p-6 shadow-xl">
+            <p className="text-[10px] font-semibold uppercase tracking-[3px] text-[#d4af37]">
               Order Summary
-            </h2>
+            </p>
+            <h2 className="mt-1 text-lg font-bold text-[#f5f1e8]">Estimated Total</h2>
 
-            {/* Product Count */}
-            <div className="flex justify-between border-b border-white/10 py-4 text-sm text-gray-400">
-              <span>Total Products</span>
-              <span>{cartItems.length}</span>
-            </div>
+            <dl className="mt-5 space-y-3 divide-y divide-white/5 text-xs text-gray-300">
+              <div className="flex justify-between pt-2">
+                <span>Total Items</span>
+                <span className="font-mono text-[#f5f1e8]">{cartCount}</span>
+              </div>
+              <div className="flex justify-between pt-2">
+                <span>Subtotal</span>
+                <span className="font-mono text-[#f5f1e8]">{formatTaka(cartTotal)}</span>
+              </div>
+              <div className="flex justify-between pt-2">
+                <span>Nationwide Delivery</span>
+                <span className="font-mono text-[#f5f1e8]">{formatTaka(deliveryCharge)}</span>
+              </div>
+              <div className="flex justify-between pt-3 text-sm font-bold text-[#f5f1e8]">
+                <span>Grand Total</span>
+                <span className="text-[#d4af37] font-extrabold">{formatTaka(grandTotal)}</span>
+              </div>
+            </dl>
 
-            {/* Quantity */}
-            <div className="flex justify-between border-b border-white/10 py-4 text-sm text-gray-400">
-              <span>Total Quantity</span>
-              <span>{cartCount}</span>
-            </div>
-
-            {/* Subtotal */}
-            <div className="flex justify-between border-b border-white/10 py-4 text-sm text-gray-400">
-              <span>Subtotal</span>
-              <span>
-                ৳{cartTotal.toLocaleString("en-BD")}
-              </span>
-            </div>
-
-            {/* Delivery */}
-            <div className="flex justify-between border-b border-white/10 py-4 text-sm text-gray-400">
-              <span>Delivery Charge</span>
-              <span>
-                ৳{deliveryCharge.toLocaleString("en-BD")}
-              </span>
-            </div>
-
-            {/* Grand Total */}
-            <div className="flex justify-between gap-3 py-6 text-xl font-bold">
-              <span>Grand Total</span>
-
-              <span className="text-[#d4af37]">
-                ৳{grandTotal.toLocaleString("en-BD")}
-              </span>
-            </div>
-
-            {/* Checkout Link */}
-            <Link
-              to="/checkout"
-              className="block w-full bg-[#d4af37] py-4 text-center font-bold text-black transition hover:bg-white"
+            <button
+              type="button"
+              onClick={handleProceedToCheckout}
+              className="mt-6 flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b8964e] py-3.5 text-xs font-bold tracking-widest text-[#09090b] shadow-[0_4px_16px_rgba(212,175,87,0.25)] transition hover:from-white hover:to-white"
             >
               PROCEED TO CHECKOUT →
-            </Link>
+            </button>
 
-            <p className="mt-4 text-center text-xs leading-6 text-gray-500">
-              Secure Shopping · Cash on Delivery Available
+            <p className="mt-3 text-center text-[10px] text-gray-400">
+              Cash on delivery available nationwide across Bangladesh.
             </p>
-
-          </div>
-
+          </aside>
         </div>
       )}
-
-      {/* Footer */}
-      <footer className="mt-20 border-t border-white/10 py-8 text-center">
-        <p className="text-sm tracking-[3px] text-[#d4af37]">
-          TIMELUX
-        </p>
-
-        <p className="mt-2 text-xs text-gray-600">
-          Luxury in Every Second. © 2026 TimeLux.
-        </p>
-      </footer>
-
     </div>
   );
 }
-
-export default Cart;

@@ -1,10 +1,253 @@
-
 @import "tailwindcss";
-@keyframes heroFade {
-  from {
-    opacity: 0.3;
+
+/* ==========================================================================
+   TIMELUX — iOS LIQUID GLASS & LUXURY ANIMATION SYSTEM
+   ========================================================================== */
+
+:root {
+  /* Surfaces & Backgrounds */
+  --color-bg-canvas: #070709;
+  --color-bg-surface: #121216;
+  --color-bg-elevated: #1a1a20;
+  --color-bg-glass: rgba(22, 22, 28, 0.65);
+  --color-bg-glass-strong: rgba(18, 18, 24, 0.82);
+  --color-bg-glass-fallback: #141418;
+
+  /* Typography Colors */
+  --color-text-primary: #f7f4ed;
+  --color-text-secondary: #d6d2c9;
+  --color-text-muted: #9e9ea9;
+  --color-text-dim: #686875;
+
+  /* Champagne Gold Identity */
+  --color-accent-gold: #d4af37;
+  --color-accent-gold-light: #f7df8b;
+  --color-accent-gold-dark: #b58e31;
+  --color-accent-gold-glow: rgba(212, 175, 55, 0.32);
+
+  /* Liquid Glass Borders & Highlights */
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-specular: rgba(255, 255, 255, 0.28);
+  --border-gold-subtle: rgba(212, 175, 55, 0.28);
+  --border-gold-active: rgba(212, 175, 55, 0.75);
+
+  /* Radii */
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+
+  /* Shadows */
+  --shadow-dock: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  --shadow-liquid: 0 12px 36px -4px rgba(0, 0, 0, 0.6), inset 0 1px 1.5px rgba(255, 255, 255, 0.22), inset 0 -1px 1px rgba(212, 175, 55, 0.15);
+  --shadow-liquid-hover: 0 24px 48px -8px rgba(0, 0, 0, 0.85), 0 0 30px rgba(212, 175, 55, 0.22), inset 0 1.5px 2px rgba(255, 255, 255, 0.4), inset 0 -1px 2px rgba(212, 175, 55, 0.3);
+
+  /* Motion Curves */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   iOS LIQUID GLASS SURFACES
+   ========================================================================== */
+
+.liquid-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(24, 24, 30, 0.72) 45%,
+    rgba(16, 16, 20, 0.85) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: var(--shadow-liquid);
+}
+
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .liquid-glass {
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
   }
-  to {
+}
+
+.liquid-glass-gold {
+  background: linear-gradient(
+    135deg,
+    rgba(212, 175, 55, 0.16) 0%,
+    rgba(24, 22, 18, 0.78) 50%,
+    rgba(14, 14, 18, 0.9) 100%
+  );
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: var(--shadow-liquid);
+}
+
+@supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
+  .liquid-glass-gold {
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
+  }
+}
+
+.liquid-orb {
+  background: radial-gradient(
+    circle at 30% 25%,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(42, 42, 50, 0.85) 45%,
+    rgba(20, 20, 25, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.55),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.35),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.6);
+}
+
+.liquid-orb-active {
+  background: radial-gradient(
+    circle at 30% 25%,
+    rgba(255, 248, 220, 0.45) 0%,
+    rgba(212, 175, 55, 0.35) 45%,
+    rgba(36, 30, 18, 0.95) 100%
+  );
+  border: 1px solid rgba(247, 223, 139, 0.65);
+  box-shadow:
+    0 10px 28px rgba(212, 175, 55, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.55),
+    inset 0 -1.5px 2px rgba(212, 175, 55, 0.4);
+}
+
+/* ==========================================================================
+   FLOATING DOCK CARD HOVER MAGNIFICATION
+   ========================================================================== */
+
+.dock-card-hover {
+  transition:
+    transform 420ms var(--ease-spring),
+    box-shadow 420ms var(--ease-spring),
+    border-color 300ms ease;
+  will-change: transform;
+}
+
+.dock-card-hover:hover,
+.dock-card-hover:focus-within {
+  transform: translateY(-10px) scale(1.055);
+  z-index: 25;
+  border-color: rgba(212, 175, 55, 0.75);
+  box-shadow: var(--shadow-liquid-hover);
+}
+
+/* ==========================================================================
+   KEYFRAME ANIMATIONS (HERO SLIDE-IN, FLOAT, SHIMMER)
+   ========================================================================== */
+
+@keyframes heroSlideFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(90px) scale(0.92);
+    filter: blur(4px);
+  }
+  100% {
     opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes heroSlideFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-70px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes badgeFloatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes heroProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes marqueeSlide {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-hero-slide-right {
+  animation: heroSlideFromRight 680ms var(--ease-spring) forwards;
+}
+
+.animate-hero-slide-left {
+  animation: heroSlideFromLeft 620ms var(--ease-spring) forwards;
+}
+
+.animate-badge-float {
+  animation: badgeFloatUp 550ms var(--ease-spring) forwards;
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 4.5s ease-in-out infinite;
+}
+
+.animate-hero-progress {
+  animation: heroProgress 5000ms linear forwards;
+}
+
+/* Reduced Motion Accommodations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .dock-card-hover:hover,
+  .dock-card-hover:focus-within {
+    transform: none !important;
   }
 }
