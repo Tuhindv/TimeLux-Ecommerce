@@ -453,7 +453,7 @@ Total: ৳${finalPrice * quantity}`;
         <div className="grid items-start gap-3 lg:grid-cols-2 lg:gap-12">
 
           {/* Product Gallery */}
-          <div className="lg:sticky lg:top-8">
+          <div className="min-w-0 w-full lg:sticky lg:top-8">
 
             {/* Main Image */}
             <div className="group relative overflow-hidden rounded-xl border border-[#d4af37]/30 bg-[#111]">
@@ -489,16 +489,16 @@ Total: ৳${finalPrice * quantity}`;
                 ⛶ Click to Zoom
               </button>
             </div>
-
-           {/* Thumbnail Gallery - Horizontal Scroll */}
+{/* Thumbnail Gallery - Mobile Horizontal Scroll */}
 {images.length > 1 && (
-  <div className="mt-3 w-full min-w-0">
+  <div className="mt-3 w-full min-w-0 max-w-full">
     <div
-      className="flex w-full min-w-0 flex-nowrap gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain pb-3 touch-pan-x"
+      className="flex w-full max-w-full flex-nowrap gap-3 overflow-x-scroll overflow-y-hidden pb-3"
       style={{
+        WebkitOverflowScrolling: "touch",
+        touchAction: "pan-x",
         scrollbarWidth: "thin",
         scrollbarColor: "#d4af37 #151515",
-        WebkitOverflowScrolling: "touch",
       }}
     >
       {images.map((image, index) => (
@@ -506,10 +506,10 @@ Total: ৳${finalPrice * quantity}`;
           type="button"
           key={image + index}
           onClick={() => setSelectedImage(index)}
-          className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+          className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 ${
             selectedImage === index
               ? "border-[#d4af37]"
-              : "border-white/10 hover:border-[#d4af37]/50"
+              : "border-white/10"
           }`}
         >
           <img
@@ -530,6 +530,7 @@ Total: ৳${finalPrice * quantity}`;
     </p>
   </div>
 )}
+           
 </div>
           {/* Product Information */}
           <div className="mt-2 lg:mt-0">
