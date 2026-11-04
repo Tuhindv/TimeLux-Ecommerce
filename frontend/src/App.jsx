@@ -103,7 +103,7 @@ useEffect(() => {
 
   return () => clearInterval(sliderInterval);
 }, []);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
 
   // Show only active products
   const watches = products
@@ -174,7 +174,7 @@ useEffect(() => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden items-center gap-8 text-[13px] font-semibold tracking-wide lg:flex">
+          <div className="flex items-center gap-6 text-[13px] font-semibold tracking-wide">
 
             <button
               onClick={() => {
@@ -289,14 +289,7 @@ useEffect(() => {
               )}
             </Link>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Menu"
-              className="text-2xl hover:text-[#d4af37] lg:hidden"
-            >
-              {mobileMenuOpen ? "✕" : "☰"}
-            </button>
+           
 
           </div>
         </div>
@@ -317,77 +310,7 @@ useEffect(() => {
           </div>
         )}
 
-        
-{/* Mobile Menu - One Line */}
-{mobileMenuOpen && (
-  <div className="mt-5 border-t border-[#b8964e]/30 pt-4 lg:hidden">
 
-    <div className="flex flex-nowrap items-center gap-6 overflow-x-auto whitespace-nowrap pb-3">
-      {[
-        ["Home", "All"],
-        ["Men's Watch", "Men's Watch"],
-        ["Women's Watch", "Women's Watch"],
-        ["Couple Watch", "Couple Watch"],
-      ].map(([label, category]) => (
-        <button
-          key={category}
-          onClick={() => {
-            setSelectedCategory(category);
-            setSelectedBrand("All");
-            setMobileMenuOpen(false);
-            setShowBrandMenu(false);
-            document.getElementById("collection")?.scrollIntoView({
-              behavior: "smooth",
-            });
-          }}
-          className="shrink-0 py-3 text-base font-bold hover:text-[#d4af37]"
-        >
-          {label}
-        </button>
-      ))}
-
-      <button
-        onClick={() => setShowBrandMenu(!showBrandMenu)}
-        className="shrink-0 py-3 text-base font-bold hover:text-[#d4af37]"
-      >
-        Brand {showBrandMenu ? "▴" : "▾"}
-      </button>
-    </div>
-
-    {showBrandMenu && (
-      <div className="mt-2 max-h-60 overflow-y-auto rounded-lg border border-[#d4af37]/30 bg-[#151515] py-2">
-        <button
-          onClick={() => {
-            setSelectedBrand("All");
-            setShowBrandMenu(false);
-            setMobileMenuOpen(false);
-          }}
-          className="block w-full px-4 py-3 text-left text-sm hover:bg-[#d4af37]/10"
-        >
-          All Brands
-        </button>
-
-        {brands.map((brand) => (
-          <button
-            key={brand}
-            onClick={() => {
-              setSelectedBrand(brand);
-              setShowBrandMenu(false);
-              setMobileMenuOpen(false);
-              document.getElementById("collection")?.scrollIntoView({
-                behavior: "smooth",
-              });
-            }}
-            className="block w-full px-4 py-3 text-left text-sm hover:bg-[#d4af37]/10"
-          >
-            {brand}
-          </button>
-        ))}
-      </div>
-    )}
-
-  </div>
-)}
 
 
 
