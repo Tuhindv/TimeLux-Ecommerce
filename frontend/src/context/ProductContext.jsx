@@ -73,9 +73,9 @@ export function ProductProvider({ children }) {
       collection(db, "products"),
       (snapshot) => {
         const firestoreProducts = snapshot.docs.map((item) => ({
-          id: item.id,
-          ...item.data(),
-        }));
+  ...item.data(),
+  id: item.id,
+}));
 
         setProducts(firestoreProducts);
         setLoading(false);

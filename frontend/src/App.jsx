@@ -79,6 +79,8 @@ const heroImages = [
 function HomePage() {
   const { cartCount } = useCart();
   const { products } = useProducts();
+  const normalizeBrand = (brand) =>
+  String(brand || "").trim().replace(/\s+/g, " ").toLowerCase();
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedBrand, setSelectedBrand] = useState("All");
 const [showBrandMenu, setShowBrandMenu] = useState(false);
@@ -126,19 +128,18 @@ useEffect(() => {
   const brands = [
   ...new Set(
     watches
-      .map((watch) => watch.brand?.trim())
+      .map((watch) => String(watch.brand || "").trim().replace(/\s+/g, " "))
       .filter(Boolean)
   ),
-].sort();
+].sort((a, b) => a.localeCompare(b));
     const filteredWatches = watches.filter((watch) => {
   const categoryMatch =
     selectedCategory === "All" ||
     watch.category === selectedCategory;
 
   const brandMatch =
-    selectedBrand === "All" ||
-    watch.brand?.trim().toLowerCase() === selectedBrand.toLowerCase();
-
+  selectedBrand === "All" ||
+  normalizeBrand(watch.brand) === normalizeBrand(selectedBrand);
   const searchText = search.toLowerCase();
 
   const searchMatch = [
@@ -415,10 +416,10 @@ useEffect(() => {
                 {/* Product Image */}
 <div className="relative">
   <Link
-    to={`/product/${watch.id}`}
-    aria-label={`View ${watch.name} details`}
-    className="block cursor-pointer"
-  >
+  to={`/product/${watch.id}?category=${encodeURIComponent(selectedCategory)}`}
+  aria-label={`View ${watch.name} details`}
+  className="block cursor-pointer"
+>
     <img
       src={productImage}
       alt={watch.name}
@@ -468,11 +469,11 @@ useEffect(() => {
 
   {/* View Details Button */}
           <Link
-            to={`/product/${watch.id}`}
-            className="mt-3 block w-full rounded-lg border border-[#D6B66C] bg-gradient-to-r from-[#D6B66C] to-[#B89445] py-2.5 text-center text-xs font-bold tracking-wider text-[#090B0E] shadow-[0_4px_15px_rgba(214,182,108,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:from-[#F3EBDD] hover:to-[#D6B66C] hover:shadow-[0_6px_20px_rgba(214,182,108,0.3)] sm:text-sm"
-          >
-            Add to cart
-          </Link>
+  to={`/product/${watch.id}?category=${encodeURIComponent(selectedCategory)}`}
+  className="mt-3 block w-full rounded-lg border border-[#D6B66C] bg-gradient-to-r from-[#D6B66C] to-[#B89445] py-2.5 text-center text-xs font-bold tracking-wider text-[#090B0E] shadow-[0_4px_15px_rgba(214,182,108,0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:from-[#F3EBDD] hover:to-[#D6B66C] hover:shadow-[0_6px_20px_rgba(214,182,108,0.3)] sm:text-sm"
+>
+  View Details
+</Link>
 
         </div>
       </div>

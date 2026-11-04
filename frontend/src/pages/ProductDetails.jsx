@@ -1,6 +1,11 @@
 
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  Link,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useCart } from "../context/useCart";
 import { useProducts } from "../context/useProducts";
 
@@ -42,6 +47,9 @@ function ProductDetails() {
 
 function ProductDetailsContent({ id }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+const selectedCategory = searchParams.get("category") || "All";
 
   const { addToCart, buyNow } = useCart();
   const { products } = useProducts();
@@ -541,7 +549,7 @@ Total: ৳${finalPrice * quantity}`;
           {/* Product Information */}
           <div className="mt-2 lg:mt-0">
   <p className="text-xs font-semibold uppercase tracking-[4px] text-[#d4af37]">
-              {product.brand || "TIMELUX COLLECTION"}
+              {product.brand || ""}
             </p>
 
            <h1 className="mt-1 text-3xl font-extrabold leading-tight text-white md:text-4xl">
@@ -784,93 +792,113 @@ Total: ৳${finalPrice * quantity}`;
           </div>
         </div>
       </div>
-            {/* EXPLORE COLLECTION */}
-      {products.filter((item) => item.id !== id).length > 0 && (
-        <section className="border-t border-[#d4af37]/20 bg-[#080808] px-5 py-12 md:px-16 md:py-16">
+       
+{/* ALL PRODUCTS - FILTER BY HOME PAGE CATEGORY */}
 
-          <div className="mb-8 text-center">
-            <p className="text-xs font-semibold uppercase tracking-[4px] text-[#d4af37]">
-              DISCOVER MORE
-            </p>
+{(() => {
+  const displayedProducts = products.filter((item) => {
+    if (item.id === id || item.status !== "Active") {
+      return false;
+    }
 
-            <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
-              Explore Collection
-            </h2>
+    if (selectedCategory === "All") {
+      return true;
+    }
 
-            <p className="mt-3 text-sm text-gray-400">
-              Discover more timeless styles from TimeLux.
-            </p>
-          </div>
+    return (
+      item.category?.trim().toLowerCase() ===
+      selectedCategory.trim().toLowerCase()
+    );
+  });
 
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+  if (displayedProducts.length === 0) return null;
 
-            {products
-              .filter((item) => item.id !== id)
-              .map((watch) => {
-                const watchPrice =
-                  watch.offerActive &&
-                  Number(watch.discountPercent) > 0
-                    ? Math.round(
-                        Number(watch.price) *
-                        (1 - Number(watch.discountPercent) / 100)
-                      )
-                    : Number(watch.price);
+  return (
+    <section
+      className="border-t border-[#d4af37]/20 bg-[#080808] px-5 py-12 md:px-16 md:py-16"
+    >
+      <div className="mb-8 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[4px] text-[#d4af37]">
+          TIMELUX COLLECTION
+        </p>
 
-                const watchImage =
-                  getProductImages(watch)[0] || defaultImage;
+        <h2 className="mt-3 text-3xl font-bold text-white md:text-4xl">
+          Explore Our Watches
+        </h2>
 
-                return (
-                  <Link
-                    key={watch.id}
-                    to={`/product/${watch.id}`}
-                    onClick={() => window.scrollTo(0, 0)}
-                    className="group overflow-hidden rounded-xl border border-white/10 bg-[#111] transition duration-300 hover:-translate-y-1 hover:border-[#d4af37]/60"
-                  >
+        <p className="mt-3 text-sm text-gray-400">
+          Discover more watches from our collection.
+        </p>
+      </div>
 
-                    <div className="relative overflow-hidden">
-                      <img
-                        src={watchImage}
-                        alt={watch.name}
-                        onError={(event) => {
-                          event.currentTarget.onerror = null;
-                          event.currentTarget.src = defaultImage;
-                        }}
-                        className="h-40 w-full object-cover transition duration-500 group-hover:scale-110 sm:h-56"
-                      />
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {displayedProducts.map((watch) => {
+          const watchPrice =
+            watch.offerActive &&
+            Number(watch.discountPercent) > 0
+              ? Math.round(
+                  Number(watch.price) *
+                  (1 - Number(watch.discountPercent) / 100)
+                )
+              : Number(watch.price);
 
-                      {watch.offerActive &&
-                        Number(watch.discountPercent) > 0 && (
-                          <span className="absolute left-2 top-2 rounded bg-red-600 px-2 py-1 text-[10px] font-bold text-white">
-                            {watch.discountPercent}% OFF
-                          </span>
-                        )}
-                    </div>
+          const watchImage =
+            getProductImages(watch)[0] || defaultImage;
 
-                    <div className="p-3 sm:p-4">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-[#d4af37]">
-                        {watch.brand || "TIMELUX"}
-                      </p>
+          return (
+            <Link
+              key={watch.id}
+              to={`/product/${watch.id}?category=${encodeURIComponent(selectedCategory)}`}
+              onClick={() => window.scrollTo(0, 0)}
+              className="group overflow-hidden rounded-xl border border-white/10 bg-[#111] transition duration-300 hover:-translate-y-1 hover:border-[#d4af37]/60"
+            >
+              <div className="relative overflow-hidden">
+                <img
+                  src={watchImage}
+                  alt={watch.name}
+                  onError={(event) => {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = defaultImage;
+                  }}
+                  className="h-40 w-full object-cover transition duration-500 group-hover:scale-110 sm:h-56"
+                />
 
-                      <h3 className="mt-2 line-clamp-2 text-sm font-bold text-white transition group-hover:text-[#d4af37] sm:text-base">
-                        {watch.name}
-                      </h3>
+                {watch.offerActive &&
+                  Number(watch.discountPercent) > 0 && (
+                    <span className="absolute left-2 top-2 rounded bg-red-600 px-2 py-1 text-[10px] font-bold text-white">
+                      {watch.discountPercent}% OFF
+                    </span>
+                  )}
+              </div>
 
-                      <p className="mt-3 text-lg font-bold text-[#d4af37]">
-                        ৳{watchPrice.toLocaleString("en-BD")}
-                      </p>
+              <div className="p-3 sm:p-4">
+                {watch.brand && (
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-[#d4af37]">
+                    {watch.brand}
+                  </p>
+                )}
 
-                      <p className="mt-2 text-xs font-semibold text-gray-400 transition group-hover:text-[#d4af37]">
-                        VIEW DETAILS →
-                      </p>
-                    </div>
+                <h3 className="mt-2 line-clamp-2 text-sm font-bold text-white transition group-hover:text-[#d4af37] sm:text-base">
+                  {watch.name}
+                </h3>
 
-                  </Link>
-                );
-              })}
+                <p className="mt-3 text-lg font-bold text-[#d4af37]">
+                  ৳{watchPrice.toLocaleString("en-BD")}
+                </p>
 
-          </div>
-        </section>
-      )}
+                <p className="mt-2 text-xs font-semibold text-gray-400 transition group-hover:text-[#d4af37]">
+                  VIEW DETAILS →
+                </p>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+})()}
+
+ 
 
       {/* FULLSCREEN IMAGE GALLERY */}
       {isGalleryOpen && (
