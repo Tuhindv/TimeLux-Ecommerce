@@ -708,9 +708,7 @@ Total: ৳${finalPrice * quantity}`;
               <h3 className="text-sm font-semibold leading-6 text-white">
                 {benefit}
               </h3>
-              <p className="mt-1 text-xs text-gray-300">
-                A detail of your TimeLux experience.
-              </p>
+              
             </div>
           </div>
         ))
