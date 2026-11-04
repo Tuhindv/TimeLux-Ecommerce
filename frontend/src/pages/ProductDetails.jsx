@@ -56,7 +56,7 @@ const selectedCategory = searchParams.get("category") || "All";
 
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [showAllImages, setShowAllImages] = useState(false);
+
 
   // Fullscreen Gallery States
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -282,7 +282,13 @@ useEffect(() => {
     window.removeEventListener("keydown", handleKeyDown);
   };
 }, [isGalleryOpen, images.length]);
-  
+  if (!product) {
+  return (
+    <div className="min-h-screen bg-[#080808] p-10 text-center text-white">
+      Loading product...
+    </div>
+  );
+}
   // Product Price
   const hasOffer =
     product.offerActive && Number(product.discountPercent) > 0;
@@ -398,12 +404,7 @@ Total: ৳${finalPrice * quantity}`;
   );
 };
 
-  const visibleImages = showAllImages
-    ? images
-    : images.slice(0, 4);
-
-  const hiddenCount = Math.max(0, images.length - 4);
-
+  
   return (
     <>
       <div className="min-h-screen bg-[#080808] px-5 py-8 text-white md:px-16">
@@ -489,63 +490,47 @@ Total: ৳${finalPrice * quantity}`;
               </button>
             </div>
 
-            {/* Thumbnail Gallery */}
-            {images.length > 1 && (
-              <div className="mt-2 flex gap-2 overflow-x-auto pb-2">
+           {/* Thumbnail Gallery - Horizontal Scroll */}
+{images.length > 1 && (
+  <div className="mt-3 w-full min-w-0">
+    <div
+      className="flex w-full min-w-0 flex-nowrap gap-3 overflow-x-auto overflow-y-hidden overscroll-x-contain pb-3 touch-pan-x"
+      style={{
+        scrollbarWidth: "thin",
+        scrollbarColor: "#d4af37 #151515",
+        WebkitOverflowScrolling: "touch",
+      }}
+    >
+      {images.map((image, index) => (
+        <button
+          type="button"
+          key={image + index}
+          onClick={() => setSelectedImage(index)}
+          className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+            selectedImage === index
+              ? "border-[#d4af37]"
+              : "border-white/10 hover:border-[#d4af37]/50"
+          }`}
+        >
+          <img
+            src={image}
+            alt={`Product view ${index + 1}`}
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = defaultImage;
+            }}
+            className="h-full w-full object-cover"
+          />
+        </button>
+      ))}
+    </div>
 
-                {visibleImages.map((image, index) => (
-                  <button
-                    key={image + index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ${
-                      selectedImage === index
-                        ? "border-[#d4af37]"
-                        : "border-white/10 hover:border-[#d4af37]/50"
-                    }`}
-                  >
-                    <img
-                      src={image}
-                      alt={`Product view ${index + 1}`}
-                      onError={(event) => {
-                        event.currentTarget.onerror = null;
-                        event.currentTarget.src = defaultImage;
-                      }}
-                      className="h-full w-full object-cover"
-                    />
-                  </button>
-                ))}
-
-                {!showAllImages && hiddenCount > 0 && (
-                  <button
-                    onClick={() => setShowAllImages(true)}
-                    className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border border-[#d4af37]/50 bg-[#171717] text-lg font-bold text-[#d4af37] hover:bg-[#d4af37] hover:text-black"
-                  >
-                    +{hiddenCount}
-                  </button>
-                )}
-
-                {showAllImages && images.length > 4 && (
-                  <button
-                    onClick={() => {
-                      setShowAllImages(false);
-
-                      if (selectedImage > 3) {
-                        setSelectedImage(0);
-                      }
-                    }}
-                    className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border border-white/20 bg-[#171717] text-sm text-gray-300 hover:border-[#d4af37]"
-                  >
-                    Show Less
-                  </button>
-                )}
-
-              </div>
-            )}
-            <p className="mt-0 text-center text-[10px] text-gray-500 leading-tight">
-  Click the main image to view fullscreen and zoom.
-</p>           
-          </div>
-
+    <p className="mt-1 text-center text-[10px] text-gray-500">
+      Swipe left or right to view more images
+    </p>
+  </div>
+)}
+</div>
           {/* Product Information */}
           <div className="mt-2 lg:mt-0">
   <p className="text-xs font-semibold uppercase tracking-[4px] text-[#d4af37]">
