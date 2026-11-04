@@ -174,7 +174,7 @@ useEffect(() => {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="flex items-center gap-6 text-[13px] font-semibold tracking-wide">
+          <div className="flex min-w-0 flex-1 items-center gap-6 overflow-x-auto whitespace-nowrap px-2 text-[13px] font-semibold tracking-wide md:flex-none md:overflow-visible">
 
             <button
               onClick={() => {
