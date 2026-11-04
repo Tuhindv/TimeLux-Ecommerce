@@ -233,7 +233,7 @@ useEffect(() => {
   </button>
 
   {showBrandMenu && (
-    <div className="absolute left-0 top-full z-50 mt-3 max-h-64 w-48 overflow-y-auto rounded-lg border border-[#d4af37]/30 bg-[#151515] py-2 shadow-xl">
+    <div className="fixed left-4 right-4 top-20 z-[9999] max-h-64 overflow-y-auto rounded-lg border border-[#d4af37]/30 bg-[#151515] py-2 shadow-xl md:absolute md:left-0 md:right-auto md:top-full md:mt-3 md:w-48">
       <button
         onClick={() => {
           setSelectedBrand("All");
