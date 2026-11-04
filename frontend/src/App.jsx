@@ -223,20 +223,43 @@ useEffect(() => {
             >
               Couple Watch
             </button>
-            {/* Brand Menu */}
-<div className="relative">
+           
+{/* Brand Menu */}
+<div className="relative shrink-0">
   <button
-    onClick={() => setShowBrandMenu(!showBrandMenu)}
-    className="hover:text-[#d4af37]"
+    type="button"
+    onClick={() => setShowBrandMenu((prev) => !prev)}
+    aria-expanded={showBrandMenu}
+    className="cursor-pointer whitespace-nowrap hover:text-[#d4af37]"
   >
     Brand ▾
   </button>
+</div>
+</div> 
 
-  {showBrandMenu && (
-    <div className="fixed left-4 right-4 top-20 z-[9999] max-h-64 overflow-y-auto rounded-lg border border-[#d4af37]/30 bg-[#151515] py-2 shadow-xl md:absolute md:left-0 md:right-auto md:top-full md:mt-3 md:w-48">
+{/* Brand Dropdown */}
+{showBrandMenu && (
+  <div className="fixed left-4 right-4 top-20 z-[9999] max-h-64 overflow-y-auto rounded-lg border border-[#d4af37]/30 bg-[#151515] py-2 shadow-xl md:absolute md:left-0 md:right-auto md:top-full md:mt-3 md:w-48">
+    <button
+      type="button"
+      onClick={() => {
+        setSelectedBrand("All");
+        setShowBrandMenu(false);
+        document.getElementById("collection")?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }}
+      className="block w-full px-4 py-2 text-left text-sm hover:bg-[#d4af37]/10 hover:text-[#d4af37]"
+    >
+      All Brands
+    </button>
+
+    {brands.map((brand) => (
       <button
+        key={brand}
+        type="button"
         onClick={() => {
-          setSelectedBrand("All");
+          setSelectedBrand(brand);
           setShowBrandMenu(false);
           document.getElementById("collection")?.scrollIntoView({
             behavior: "smooth",
@@ -244,29 +267,14 @@ useEffect(() => {
         }}
         className="block w-full px-4 py-2 text-left text-sm hover:bg-[#d4af37]/10 hover:text-[#d4af37]"
       >
-        All Brands
+        {brand}
       </button>
+    ))}
+  </div>
+)}
 
-      {brands.map((brand) => (
-        <button
-          key={brand}
-          onClick={() => {
-            setSelectedBrand(brand);
-            setShowBrandMenu(false);
-            document.getElementById("collection")?.scrollIntoView({
-              behavior: "smooth",
-            });
-          }}
-          className="block w-full px-4 py-2 text-left text-sm hover:bg-[#d4af37]/10 hover:text-[#d4af37]"
-        >
-          {brand}
-        </button>
-      ))}
-    </div>
-  )}
-</div>
 
-          </div>
+
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-5 text-xl">
