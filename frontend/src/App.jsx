@@ -85,6 +85,8 @@ function HomePage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedBrand, setSelectedBrand] = useState("All");
 const [showBrandMenu, setShowBrandMenu] = useState(false);
+const [showMobileMenu, setShowMobileMenu] = useState(false);
+const [showMobileBrandMenu, setShowMobileBrandMenu] = useState(false);
     useEffect(() => {
   if (window.location.hash === "#collection") {
     requestAnimationFrame(() => {
@@ -158,25 +160,26 @@ useEffect(() => {
     <div className="min-h-screen bg-[#080808] text-[#F3EBDD]">
 
             {/* Navbar */}
-      <nav className="sticky top-0 z-[100] w-full border-b border-[#b8964e]/30 bg-[#080808] px-6 py-2.5 md:px-16 md:py-3">
+      <nav className="sticky top-0 z-[100] w-full border-b border-[#b8964e]/30 bg-[#080808] px-2 py-2.5 sm:px-4 md:px-16 md:py-3">
 
         <div className="flex items-center justify-between gap-4">
 
-          {/* Logo */}
-          <Link
-            to="/"
-            onClick={() => {
-  setSelectedCategory("All");
-  setSelectedBrand("All");
-  setShowBrandMenu(false);
-}}
-            className="text-xl font-bold tracking-[3px] text-[#d4af37] md:text-2xl"
-          >
-            TIMELUX
-          </Link>
+         {/* Logo */}
+<Link
+  to="/"
+  onClick={() => {
+    setSelectedCategory("All");
+    setSelectedBrand("All");
+    setShowBrandMenu(false);
+  }}
+  className="shrink-0 whitespace-nowrap text-lg font-bold tracking-[2px] text-[#d4af37] sm:text-xl sm:tracking-[3px] md:text-2xl"
+>
+  TIMELUX
+</Link>
 
           {/* Desktop Menu */}
-          <div className="flex min-w-0 flex-1 items-center gap-6 overflow-x-auto whitespace-nowrap px-2 text-[13px] font-semibold tracking-wide md:flex-none md:overflow-visible">
+          {/* Desktop Menu */}
+<div className="hidden min-w-0 flex-1 items-center gap-4 whitespace-nowrap px-2 text-[11px] font-semibold tracking-wide md:flex md:gap-6 md:text-[13px]">
 
             <button
               onClick={() => {
@@ -197,7 +200,7 @@ useEffect(() => {
                   behavior: "smooth",
                 });
               }}
-              className="hover:text-[#d4af37]"
+              className="shrink-0 whitespace-nowrap hover:text-[#d4af37]"
             >
               Men's Watch
             </button>
@@ -209,7 +212,7 @@ useEffect(() => {
                   behavior: "smooth",
                 });
               }}
-              className="hover:text-[#d4af37]"
+              className="shrink-0 whitespace-nowrap hover:text-[#d4af37]"
             >
               Women's Watch
             </button>
@@ -221,7 +224,7 @@ useEffect(() => {
                   behavior: "smooth",
                 });
               }}
-              className="hover:text-[#d4af37]"
+              className="shrink-0 whitespace-nowrap hover:text-[#d4af37]"
             >
               Couple Watch
             </button>
@@ -232,7 +235,7 @@ useEffect(() => {
     type="button"
     onClick={() => setShowBrandMenu((prev) => !prev)}
     aria-expanded={showBrandMenu}
-    className="cursor-pointer whitespace-nowrap hover:text-[#d4af37]"
+    className="shrink-0 cursor-pointer whitespace-nowrap hover:text-[#d4af37]"
   >
     Brand ▾
   </button>
@@ -279,7 +282,17 @@ useEffect(() => {
 
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-5 text-xl">
+          <div className="flex shrink-0 items-center gap-3 text-lg sm:gap-4 sm:text-xl">
+            {/* Mobile Hamburger Button */}
+<button
+  type="button"
+  onClick={() => setShowMobileMenu((prev) => !prev)}
+  className="text-2xl text-[#d4af37] md:hidden"
+  aria-label="Toggle Navigation Menu"
+  aria-expanded={showMobileMenu}
+>
+  {showMobileMenu ? "✕" : "☰"}
+</button>
 
             <button
               aria-label="Search"
@@ -303,6 +316,114 @@ useEffect(() => {
 
           </div>
         </div>
+                {/* Mobile Navigation Menu */}
+        {showMobileMenu && (
+          <div className="absolute left-0 top-full z-[200] w-full border-t border-[#d4af37]/30 bg-[#101010] px-5 py-5 shadow-xl md:hidden">
+            <div className="flex flex-row items-center gap-5 overflow-x-auto whitespace-nowrap text-sm font-semibold text-[#F3EBDD] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+              <button
+                className="shrink-0 text-left hover:text-[#d4af37]"
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setSelectedBrand("All");
+                  setShowMobileMenu(false);
+                  setShowMobileBrandMenu(false);
+                  document.getElementById("collection")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                Home
+              </button>
+
+              <button
+                className="shrink-0 text-left hover:text-[#d4af37]"
+                onClick={() => {
+                  setSelectedCategory("Men's Watch");
+                  setShowMobileMenu(false);
+                  document.getElementById("collection")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                Men's Watch
+              </button>
+
+              <button
+                className="shrink-0 text-left hover:text-[#d4af37]"
+                onClick={() => {
+                  setSelectedCategory("Women's Watch");
+                  setShowMobileMenu(false);
+                  document.getElementById("collection")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                Women's Watch
+              </button>
+
+              <button
+                className="shrink-0 text-left hover:text-[#d4af37]"
+                onClick={() => {
+                  setSelectedCategory("Couple Watch");
+                  setShowMobileMenu(false);
+                  document.getElementById("collection")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                Couple Watch
+              </button>
+
+              {/* Mobile Brand Menu */}
+              <button
+                className="shrink-0 text-left hover:text-[#d4af37]"
+                onClick={() => setShowMobileBrandMenu((prev) => !prev)}
+              >
+                Brand
+                <span>{showMobileBrandMenu ? "▲" : "▼"}</span>
+              </button>
+
+              {showMobileBrandMenu && (
+                <div className="flex flex-col gap-3 border-l border-[#d4af37]/30 pl-4">
+
+                  <button
+                    className="text-left text-gray-300 hover:text-[#d4af37]"
+                    onClick={() => {
+                      setSelectedBrand("All");
+                      setShowMobileMenu(false);
+                      setShowMobileBrandMenu(false);
+                      document.getElementById("collection")?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }}
+                  >
+                    All Brands
+                  </button>
+
+                  {brands.map((brand) => (
+                    <button
+                      key={brand}
+                      className="text-left text-gray-300 hover:text-[#d4af37]"
+                      onClick={() => {
+                        setSelectedBrand(brand);
+                        setShowMobileMenu(false);
+                        setShowMobileBrandMenu(false);
+                        document.getElementById("collection")?.scrollIntoView({
+                          behavior: "smooth",
+                        });
+                      }}
+                    >
+                      {brand}
+                    </button>
+                  ))}
+
+                </div>
+              )}
+
+            </div>
+          </div>
+        )}
 
         {/* Search Input */}
         {showSearch && (
