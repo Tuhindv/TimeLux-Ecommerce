@@ -493,14 +493,15 @@ Total: ৳${finalPrice * quantity}`;
 {images.length > 1 && (
   <div className="mt-3 w-full min-w-0 max-w-full">
     <div
-      className="flex w-full max-w-full flex-nowrap gap-3 overflow-x-scroll overflow-y-hidden pb-3"
-      style={{
-        WebkitOverflowScrolling: "touch",
-        touchAction: "pan-x",
-        scrollbarWidth: "thin",
-        scrollbarColor: "#d4af37 #151515",
-      }}
-    >
+  className="flex w-full max-w-full flex-nowrap gap-3 overflow-x-auto overflow-y-hidden pb-3 touch-pan-x"
+  style={{
+    WebkitOverflowScrolling: "touch",
+    touchAction: "pan-x",
+    overscrollBehaviorX: "contain",
+    scrollbarWidth: "thin",
+    scrollbarColor: "#d4af37 #151515",
+  }}
+>
       {images.map((image, index) => (
         <button
           type="button"
